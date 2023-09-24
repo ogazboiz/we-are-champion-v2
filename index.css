@@ -146,3 +146,7 @@ ul li{
 .likeEmoji.active {
     color: black;
   }
+
+  textarea {
+    resize: vertical;
+  }
