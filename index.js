@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, update } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
+import { getDatabase, ref, push, onValue, update,remove } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
 
 // Function to check if a user has already liked a comment
 function hasUserLikedComment(commentID) {
@@ -52,6 +52,8 @@ document.addEventListener('click', function (event) {
 
       // Mark the comment as liked by the user
       markCommentAsLiked(commentID);
+
+      event.target.classList.add('active');
     } else {
       // User has already liked this comment
       alert('You have already liked this comment.');
@@ -60,19 +62,21 @@ document.addEventListener('click', function (event) {
 });
 
 buttonEl.addEventListener('click', function () {
-  let inputValue = commentEl.value;
-  let senderValue = senderEl.value;
-  let recipientValue = recipientEl.value;
-  let commentID = push(commentListInDB, null).key;
-  let messageData = {
-    sender: senderValue,
-    recipient: recipientValue,
-    comment: inputValue,
-    commentID: commentID
-  };
-  push(commentListInDB, messageData);
-  clearTextFieldEl();
-  clearSenderRecipientFields();
+  let inputValue = commentEl.value.trim();
+  let senderValue = senderEl.value.trim();
+  let recipientValue = recipientEl.value.trim();
+  if (senderValue !== "" && recipientValue !== "" && inputValue !== "") {
+    let commentID = push(commentListInDB, null).key;
+    let messageData = {
+        sender: senderValue,
+        recipient: recipientValue,
+        comment: inputValue,
+        commentID: commentID
+    };
+    push(commentListInDB, messageData);
+    clearTextFieldEl();
+    clearSenderRecipientFields();
+}
 });
 
 onValue(commentListInDB, function (snapshot) {
@@ -111,8 +115,18 @@ function appendItemToCommentList(item) {
   newEl.innerHTML = `
     <p class="custom-text"> To ${itemValue.recipient}</p>
     ${itemValue.comment}
-    <p class="custom-text2">From ${itemValue.sender} <span class="likeEmoji" data-commentid="${itemValue.commentID}">❤️<span id="likeCount${itemValue.commentID}">0</span></span> </p>
+    <p class="custom-text2">From ${itemValue.sender} <span class="likeEmoji" data-commentid="${itemValue.commentID}">❤️<span class="likeCountEmoji" id="likeCount${itemValue.commentID}">0</span></span> </p>
     `;
+
+    newEl.addEventListener("dblclick", function(){
+        let exactLocationOfItemInDB = ref(database, `commentList/${itemID}`);
+        remove(exactLocationOfItemInDB);
+    
+        // Also remove the corresponding like entry
+        update(likeListInDB, {
+          [itemValue.commentID]: null
+        });
+      });
 
   listEL.append(newEl);
 }
