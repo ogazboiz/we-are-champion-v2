@@ -126,7 +126,7 @@ function appendItemToCommentList(item) {
     //     update(likeListInDB, {
     //       [itemValue.commentID]: null
     //     });
-      });
+      // });
 
   listEL.append(newEl);
 }
