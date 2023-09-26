@@ -118,15 +118,15 @@ function appendItemToCommentList(item) {
     <p class="custom-text2">From ${itemValue.sender} <span class="likeEmoji" data-commentid="${itemValue.commentID}">❤️<span class="likeCountEmoji" id="likeCount${itemValue.commentID}">0</span></span> </p>
     `;
 
-    newEl.addEventListener("dblclick", function(){
-        let exactLocationOfItemInDB = ref(database, `commentList/${itemID}`);
-        remove(exactLocationOfItemInDB);
+    // newEl.addEventListener("dblclick", function(){
+    //     let exactLocationOfItemInDB = ref(database, `commentList/${itemID}`);
+    //     remove(exactLocationOfItemInDB);
     
-        // Also remove the corresponding like entry
-        update(likeListInDB, {
-          [itemValue.commentID]: null
-        });
-      });
+    //     Also remove the corresponding like entry
+    //     update(likeListInDB, {
+    //       [itemValue.commentID]: null
+    //     });
+      // });
 
   listEL.append(newEl);
 }
